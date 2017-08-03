@@ -1,10 +1,9 @@
-package com.barakyesh.cluster.framework.impl;
+package com.barakyesh.cluster.discovery.impl;
 
 
-import com.barakyesh.cluster.framework.api.NodeDetails;
-import com.barakyesh.cluster.framework.api.NodeStatus;
-import com.barakyesh.cluster.framework.api.NodeStatusUpdater;
-import com.barakyesh.cluster.framework.api.Runner;
+import com.barakyesh.cluster.discovery.api.NodeDetails;
+import com.barakyesh.cluster.discovery.api.NodeStatus;
+import com.barakyesh.cluster.discovery.api.NodeStatusUpdater;
 import com.barakyesh.common.utils.thread.AsyncIntervalRunnable;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Barak Yeshoua.
  */
-public class NodeStatusUpdaterRunner extends AsyncIntervalRunnable implements Runner{
+public class NodeStatusUpdaterRunner extends AsyncIntervalRunnable{
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private ServiceInstance<NodeDetails> thisInstance;

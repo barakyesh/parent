@@ -18,7 +18,7 @@ public class ClusterFrameworkFactory {
         return new Builder();
     }
 
-    public static ClusterFramework newCluster(String clusterName,String connectString, int baseSleepTimeMs, int maxRetries){
+    public static ClusterFramework newCluster(String clusterName, String connectString, int baseSleepTimeMs, int maxRetries){
         return builder().
                 clusterName(clusterName).
                 connectString(connectString).

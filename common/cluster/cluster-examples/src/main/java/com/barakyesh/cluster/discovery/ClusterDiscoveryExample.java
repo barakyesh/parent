@@ -1,6 +1,8 @@
-package com.barakyesh.cluster.framework;
+package com.barakyesh.cluster.discovery;
 
-import com.barakyesh.cluster.framework.api.*;
+import com.barakyesh.cluster.discovery.api.*;
+import com.barakyesh.cluster.framework.ClusterFrameworkFactory;
+import com.barakyesh.cluster.framework.api.ClusterFramework;
 import com.barakyesh.common.utils.CloseableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import java.util.Random;
 /**
  * Created by Barak Yeshoua.
  */
-public class ClusterExample {
+public class ClusterDiscoveryExample {
     public static void main(String[] args) throws Exception {
         ClusterFramework myCluster = null;
         List<ClusterNode> nodes = new ArrayList<>();

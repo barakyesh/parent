@@ -1,10 +1,10 @@
-package com.barakyesh.cluster.framework.impl;
+package com.barakyesh.cluster.discovery.impl;
 
 
-import com.barakyesh.cluster.framework.api.ClusterChangeListener;
-import com.barakyesh.cluster.framework.api.ClusterNode;
-import com.barakyesh.cluster.framework.api.CreateNodeBuilder;
-import com.barakyesh.cluster.framework.api.NodeStatusUpdater;
+import com.barakyesh.cluster.discovery.api.ClusterChangeListener;
+import com.barakyesh.cluster.discovery.api.ClusterNode;
+import com.barakyesh.cluster.discovery.api.CreateNodeBuilder;
+import com.barakyesh.cluster.discovery.api.NodeStatusUpdater;
 import org.apache.curator.framework.CuratorFramework;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
     private ClusterChangeListener listener;
     private NodeStatusUpdater updater;
 
-    CreateNodeBuilderImpl(CuratorFramework client, String clusterPath) {
+    public CreateNodeBuilderImpl(CuratorFramework client, String clusterPath) {
         this.client = client;
         this.clusterPath = clusterPath;
     }

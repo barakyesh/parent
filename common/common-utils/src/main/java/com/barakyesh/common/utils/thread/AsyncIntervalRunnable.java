@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Barak Yeshoua.
  */
-public abstract class AsyncIntervalRunnable implements Runnable,Closeable{
+public abstract class AsyncIntervalRunnable implements Runnable,Closeable,Runner{
     private final Logger log = LoggerFactory.getLogger(getClass());
     private ClosableExecutorService closableExecutorService;
     @Override

@@ -1,13 +1,10 @@
-package com.barakyesh.cluster.framework.impl;
+package com.barakyesh.cluster.discovery.impl;
 
 
-import com.barakyesh.cluster.framework.api.ClusterChangeListener;
-import com.barakyesh.cluster.framework.api.NodeDetails;
-import com.barakyesh.cluster.framework.api.NodeStatus;
-import com.barakyesh.cluster.framework.api.Runner;
+import com.barakyesh.cluster.discovery.api.ClusterChangeListener;
+import com.barakyesh.cluster.discovery.api.NodeDetails;
+import com.barakyesh.cluster.discovery.api.NodeStatus;
 import com.barakyesh.common.utils.thread.AsyncIntervalRunnable;
-import com.barakyesh.common.utils.thread.ClosableExecutorService;
-import com.barakyesh.common.utils.thread.ThreadUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 
@@ -16,12 +13,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.barakyesh.cluster.framework.api.ClusterEventType.*;
+import static com.barakyesh.cluster.discovery.api.ClusterEventType.*;
 
 /**
  * Created by Barak Yeshoua.
  */
-public class ClusterChangeListenerRunner extends AsyncIntervalRunnable implements Runner{
+public class ClusterChangeListenerRunner extends AsyncIntervalRunnable{
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private ServiceInstance<NodeDetails> thisInstance;
     private final ClusterChangeListener listener;

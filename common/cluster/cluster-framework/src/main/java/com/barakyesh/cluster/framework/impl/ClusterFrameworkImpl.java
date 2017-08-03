@@ -1,8 +1,9 @@
 package com.barakyesh.cluster.framework.impl;
 
+import com.barakyesh.cluster.discovery.api.CreateNodeBuilder;
+import com.barakyesh.cluster.discovery.impl.CreateNodeBuilderImpl;
 import com.barakyesh.cluster.framework.ClusterFrameworkFactory;
 import com.barakyesh.cluster.framework.api.ClusterFramework;
-import com.barakyesh.cluster.framework.api.CreateNodeBuilder;
 import com.barakyesh.common.utils.CloseableUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

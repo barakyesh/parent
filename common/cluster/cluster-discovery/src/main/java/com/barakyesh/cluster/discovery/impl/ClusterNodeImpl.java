@@ -1,9 +1,9 @@
-package com.barakyesh.cluster.framework.impl;
+package com.barakyesh.cluster.discovery.impl;
 
-import com.barakyesh.cluster.framework.api.ClusterChangeListener;
-import com.barakyesh.cluster.framework.api.ClusterNode;
-import com.barakyesh.cluster.framework.api.NodeDetails;
-import com.barakyesh.cluster.framework.api.NodeStatusUpdater;
+import com.barakyesh.cluster.discovery.api.ClusterChangeListener;
+import com.barakyesh.cluster.discovery.api.ClusterNode;
+import com.barakyesh.cluster.discovery.api.NodeDetails;
+import com.barakyesh.cluster.discovery.api.NodeStatusUpdater;
 import com.barakyesh.common.utils.CloseableUtils;
 import com.google.common.base.Preconditions;
 import org.apache.curator.x.discovery.ServiceDiscovery;

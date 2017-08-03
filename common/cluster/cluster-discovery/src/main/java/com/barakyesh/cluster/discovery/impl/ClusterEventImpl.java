@@ -1,7 +1,7 @@
-package com.barakyesh.cluster.framework.impl;
+package com.barakyesh.cluster.discovery.impl;
 
-import com.barakyesh.cluster.framework.api.ClusterEvent;
-import com.barakyesh.cluster.framework.api.ClusterEventType;
+import com.barakyesh.cluster.discovery.api.ClusterEvent;
+import com.barakyesh.cluster.discovery.api.ClusterEventType;
 
 /**
  * Created by Barak Yeshoua.
