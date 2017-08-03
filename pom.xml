@@ -12,5 +12,62 @@
         <module>common</module>
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
+    <dependencyManagement>
+        <!--<dependencies>-->
+            <!--<dependency>-->
+                <!--<groupId>io.spring.platform</groupId>-->
+                <!--<artifactId>platform-bom</artifactId>-->
+                <!--<version>Brussels-SR1</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>postgresql</groupId>-->
+                <!--<artifactId>postgresql</artifactId>-->
+                <!--<version>9.4.1208-jdbc42-atlassian-hosted</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.flywaydb</groupId>-->
+                <!--<artifactId>flyway-core</artifactId>-->
+                <!--<version>4.2.0</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.zookeeper</groupId>-->
+                <!--<artifactId>zookeeper</artifactId>-->
+                <!--<version>3.4.10</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.kafka</groupId>-->
+                <!--<artifactId>kafka-clients</artifactId>-->
+                <!--<version>0.11.0.0</version>-->
+            <!--</dependency>-->
+        <!--</dependencies>-->
+    </dependencyManagement>
+
+    <scm>
+        <developerConnection>scm:git:git@github.com.barakyeshesh/parent.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <repositories>
+        <!--<repository>-->
+            <!--<id>atlassian</id>-->
+            <!--<url>https://maven.atlassian.com/3rdparty/</url>-->
+        <!--</repository>-->
+    </repositories>
+
+    <distributionManagement/>
 </project>
