@@ -12,7 +12,7 @@
     <artifactId>cluster</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>cluster-framework</module>
+        <module>cluster-discovery</module>
         <module>cluster-examples</module>
     </modules>
 

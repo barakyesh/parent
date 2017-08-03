@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.barakyesh.common.cluster</groupId>
-            <artifactId>cluster-framework</artifactId>
+            <artifactId>cluster-discovery</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
