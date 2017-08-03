@@ -25,22 +25,25 @@ public class ClusterNodeImpl implements ClusterNode{
     private final ServiceInstance<NodeDetails> thisInstance;
     private final ClusterChangeListener listener;
     private final String clusterPath;
+    private final long checkIntervalInMs;
     private ClusterChangeListenerRunner listenerRunner;
 
 
     ClusterNodeImpl(CreateNodeBuilderImpl createNodeBuilder) throws Exception {
-        UriSpec uriSpec = new UriSpec("{scheme}://{host}:{port}");
+        UriSpec uriSpec = new UriSpec(createNodeBuilder.getSchema() + "://{host}:{port}");
+        NodeDetails payload = new NodeDetails();
+        payload.setNodeProperties(createNodeBuilder.getProperties());
+        this.checkIntervalInMs = createNodeBuilder.getCheckIntervalInMs();
         thisInstance = ServiceInstance.<NodeDetails>builder()
                 .name(Preconditions.checkNotNull(createNodeBuilder.getName(),"name can not be null"))
                 .address(Preconditions.checkNotNull(createNodeBuilder.getHost(),"host can not be null"))
-                .payload(new NodeDetails(createNodeBuilder.getProperties()))
-                .port(Preconditions.checkNotNull(createNodeBuilder.getPort(),"port can not be null")) // in a real application, you'd use a common port
+                .payload(payload)
+                .port(Preconditions.checkNotNull(createNodeBuilder.getPort(),"port can not be null"))
                 .uriSpec(uriSpec)
                 .build();
 
         this.listener = createNodeBuilder.getListener();
 
-        // if you mark your payload class with @JsonRootName the provided JsonInstanceSerializer will work
         JsonInstanceSerializer<NodeDetails> serializer = new JsonInstanceSerializer<>(NodeDetails.class);
 
         this.clusterPath = createNodeBuilder.getClusterPath();
@@ -62,7 +65,7 @@ public class ClusterNodeImpl implements ClusterNode{
     {
         serviceDiscovery.start();
         if(listener!=null) {
-            listenerRunner = new ClusterChangeListenerRunner(serviceDiscovery, listener, clusterPath);
+            listenerRunner = new ClusterChangeListenerRunner(serviceDiscovery,thisInstance, listener,checkIntervalInMs);
             listenerRunner.start();
         }
     }
@@ -70,7 +73,7 @@ public class ClusterNodeImpl implements ClusterNode{
     @Override
     public void close() throws IOException
     {
-        CloseableUtils.closeQuietly(serviceDiscovery);
         CloseableUtils.closeQuietly(listenerRunner);
+        CloseableUtils.closeQuietly(serviceDiscovery);
     }
 }

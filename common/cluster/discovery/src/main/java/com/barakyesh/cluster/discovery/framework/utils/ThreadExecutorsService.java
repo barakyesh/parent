@@ -1,5 +1,8 @@
 package com.barakyesh.cluster.discovery.framework.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -13,6 +16,7 @@ import static java.util.Collections.synchronizedMap;
  * Created by Barak Yeshoua.
  */
 public class ThreadExecutorsService {
+    private final static Logger log = LoggerFactory.getLogger(ThreadExecutorsService.class);
     private final static Map<String,ExecutorService> executorServiceMap = synchronizedMap(new HashMap<String, ExecutorService>());
 
 
@@ -21,14 +25,14 @@ public class ThreadExecutorsService {
         return executorServiceMap.get(threadName);
     }
 
-    public static void closeAndWait(String name, long timeout) {
-        ExecutorService executorService = executorServiceMap.remove(name);
+    public static void closeAndWait(String threadName, long timeout) {
+        ExecutorService executorService = executorServiceMap.remove(threadName);
         if(executorService != null){
             executorService.shutdown();
             try {
                 boolean isTerminated = executorService.awaitTermination(timeout, TimeUnit.MILLISECONDS);
                 if(!isTerminated){
-                    System.out.println("Failed to wait to thread termination");
+                    log.warn("Failed to wait to thread termination");
                 }
             } catch (InterruptedException ignored) {}
         }
@@ -36,6 +40,13 @@ public class ThreadExecutorsService {
 
     public static void runAsync(Runnable runnable,String threadName) {
         ThreadExecutorsService.newFixedThreadPool(threadName, 1).execute(runnable);
+    }
+
+    public static void close(String threadName) {
+        ExecutorService executorService = executorServiceMap.remove(threadName);
+        if(executorService != null) {
+            executorService.shutdown();
+        }
     }
 
 

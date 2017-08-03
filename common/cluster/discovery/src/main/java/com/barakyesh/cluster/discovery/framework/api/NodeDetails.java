@@ -15,10 +15,6 @@ public class NodeDetails {
     private NodeStatus status = NodeStatus.WHITE;
     private Map<String,String> nodeProperties = new HashMap<>();
 
-    public NodeDetails(Map<String, String> nodeProperties) {
-        this.nodeProperties = nodeProperties;
-    }
-
     public NodeStatus getStatus() {
         return status;
     }

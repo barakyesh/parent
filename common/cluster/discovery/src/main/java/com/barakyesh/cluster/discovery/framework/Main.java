@@ -3,19 +3,25 @@ package com.barakyesh.cluster.discovery.framework;
 import com.barakyesh.cluster.discovery.framework.api.ClusterChangeListener;
 import com.barakyesh.cluster.discovery.framework.api.ClusterFramework;
 import com.barakyesh.cluster.discovery.framework.api.ClusterNode;
+import com.barakyesh.cluster.discovery.framework.status.NodeStatus;
+import com.barakyesh.cluster.discovery.framework.utils.ThreadExecutorsService;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Barak Yeshoua.
  */
 public class Main {
+
     public static void main(String[] args) throws Exception {
         ClusterFramework myCluster = null;
         List<ClusterNode> nodes = new ArrayList<>();
@@ -28,35 +34,42 @@ public class Main {
                         .schema("http")
                         .host("127.0.0.1")
                         .port(8080)
+                        .checkIntervalInMs(1000)
                         .properties(new HashMap<>())
                         .registerListener(new ClusterChangeListener() {
+                            private final Logger log = LoggerFactory.getLogger(getClass());
                             @Override
                             public void nodeAdded() {
-                                System.out.println("node added");
+                                log.info("node added");
                             }
 
                             @Override
                             public void nodeRemoved() {
-                                System.out.println("node removed");
+                                log.info("node removed");
                             }
 
                             @Override
                             public void clusterSizeChanged(int newClusterSize) {
-                                System.out.println("clusterSizeChanged = " + newClusterSize);
+                                log.info("clusterSizeChanged = " + newClusterSize);
+                            }
+
+                            @Override
+                            public NodeStatus updateStatus() {
+                                return NodeStatus.values()[new Random().nextInt(NodeStatus.values().length)];
                             }
                         })
                         .forName("node-"+i);
                 clusterNode.start();
                 nodes.add(clusterNode);
-                Thread.sleep(5000);
             }
             System.out.println("Press enter/return to quit\n");
             new BufferedReader(new InputStreamReader(System.in)).readLine();
         }
         finally
         {
-            CloseableUtils.closeQuietly(myCluster);
             nodes.forEach(CloseableUtils::closeQuietly);
+            CloseableUtils.closeQuietly(myCluster);
+            ThreadExecutorsService.close();
         }
     }
 }
