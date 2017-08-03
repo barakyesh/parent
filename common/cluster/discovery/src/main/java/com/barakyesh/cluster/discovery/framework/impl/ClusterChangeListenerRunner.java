@@ -51,7 +51,7 @@ public class ClusterChangeListenerRunner implements ListenerRunner,Runnable,Clos
         } catch (Exception e) {
             log.error("Error on {} while listening for cluster changes",Thread.currentThread().getName(),e);
         }
-        log.info("{} stop running",Thread.currentThread().getName());
+        log.info("ClusterChangeListenerRunner stop running");
     }
 
     private Set<ServiceInstance<NodeDetails>> listInstances() throws Exception
@@ -100,6 +100,6 @@ public class ClusterChangeListenerRunner implements ListenerRunner,Runnable,Clos
 
     @Override
     public void start() {
-        ThreadExecutorsService.runAsync(this,getClass().getName()+"-"+thisInstance.getName());
+        ThreadExecutorsService.runAsync(this,getClass().getSimpleName()+"-"+thisInstance.getName());
     }
 }
