@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>cluster</module>
-        <module>common-utils</module>
+        <module>utils</module>
     </modules>
 
 

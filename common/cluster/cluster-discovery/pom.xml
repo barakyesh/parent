@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>com.barakyesh.common</groupId>
-            <artifactId>common-utils</artifactId>
+            <artifactId>utils</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
