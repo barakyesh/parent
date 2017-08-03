@@ -2,10 +2,12 @@ package com.barakyesh.cluster.framework.impl;
 
 
 import com.barakyesh.cluster.framework.api.ClusterChangeListener;
-import com.barakyesh.cluster.framework.api.Runner;
 import com.barakyesh.cluster.framework.api.NodeDetails;
 import com.barakyesh.cluster.framework.api.NodeStatus;
-import com.barakyesh.common.utils.ThreadExecutorsService;
+import com.barakyesh.cluster.framework.api.Runner;
+import com.barakyesh.common.utils.CloseableUtils;
+import com.barakyesh.common.utils.thread.ClosableExecutorService;
+import com.barakyesh.common.utils.thread.ThreadUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.slf4j.Logger;
@@ -18,9 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.barakyesh.cluster.framework.api.ClusterEventType.CLUSTER_SIZE_CHANGED;
-import static com.barakyesh.cluster.framework.api.ClusterEventType.NODE_ADDED;
-import static com.barakyesh.cluster.framework.api.ClusterEventType.NODE_REMOVED;
+import static com.barakyesh.cluster.framework.api.ClusterEventType.*;
 
 /**
  * Created by Barak Yeshoua.
@@ -30,8 +30,8 @@ public class ClusterChangeListenerRunner implements Runner,Runnable,Closeable{
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private ServiceInstance<NodeDetails> thisInstance;
     private final ClusterChangeListener listener;
-    private volatile boolean isRunning;
     private Set<ServiceInstance<NodeDetails>> serviceInstances;
+    private ClosableExecutorService closableExecutorService;
 
     ClusterChangeListenerRunner(ServiceDiscovery<NodeDetails> serviceDiscovery, ServiceInstance<NodeDetails> thisInstance, ClusterChangeListener listener) {
         this.serviceDiscovery = serviceDiscovery;
@@ -43,13 +43,12 @@ public class ClusterChangeListenerRunner implements Runner,Runnable,Closeable{
     public void run() {
         try {
             serviceInstances = listInstances();
-            isRunning = true;
-            while (isRunning) {
+            while (true) {
                 serviceInstances = checkServiceInstances();
                 Thread.sleep(listener.getRunIntervalInMs());
             }
         } catch (InterruptedException e) {
-            log.warn("Thread got interrupted",e);
+            log.warn("Thread got interrupted");
         } catch (Exception e) {
             log.error("Error while listening for cluster changes",e);
         }
@@ -67,7 +66,7 @@ public class ClusterChangeListenerRunner implements Runner,Runnable,Closeable{
                             .stream()
                             .filter(nodeDetailsServiceInstance -> {
                                 NodeStatus status = nodeDetailsServiceInstance.getPayload().getStatus();
-                                return status.ordinal() > NodeStatus.RED.ordinal();
+                                return status.ordinal() > NodeStatus.RED.ordinal() && !nodeDetailsServiceInstance.equals(thisInstance);
                             })
                             .collect(Collectors.toSet())
             );
@@ -88,12 +87,13 @@ public class ClusterChangeListenerRunner implements Runner,Runnable,Closeable{
 
     @Override
     public void close() throws IOException {
-        isRunning = false;
-        ThreadExecutorsService.close(getClass().getName()+"-"+thisInstance.getName());
+        CloseableUtils.closeQuietly(closableExecutorService);
     }
 
     @Override
     public void start() {
-        ThreadExecutorsService.runAsync(this,getClass().getSimpleName()+"-"+thisInstance.getName());
+        String threadNamePrefix = getClass().getSimpleName()+"-"+thisInstance.getName()+"-"+thisInstance.getId();
+        closableExecutorService = new ClosableExecutorService(ThreadUtils.singleThreadExecutor(threadNamePrefix));
+        closableExecutorService.execute(this);
     }
 }

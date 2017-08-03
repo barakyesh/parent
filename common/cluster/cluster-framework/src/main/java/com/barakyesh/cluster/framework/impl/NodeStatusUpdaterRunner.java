@@ -5,7 +5,9 @@ import com.barakyesh.cluster.framework.api.NodeDetails;
 import com.barakyesh.cluster.framework.api.NodeStatus;
 import com.barakyesh.cluster.framework.api.NodeStatusUpdater;
 import com.barakyesh.cluster.framework.api.Runner;
-import com.barakyesh.common.utils.ThreadExecutorsService;
+import com.barakyesh.common.utils.CloseableUtils;
+import com.barakyesh.common.utils.thread.ClosableExecutorService;
+import com.barakyesh.common.utils.thread.ThreadUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.slf4j.Logger;
@@ -22,7 +24,7 @@ public class NodeStatusUpdaterRunner implements Runner,Runnable,Closeable{
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private ServiceInstance<NodeDetails> thisInstance;
     private final NodeStatusUpdater updater;
-    private volatile boolean isRunning;
+    private ClosableExecutorService closableExecutorService;
 
     NodeStatusUpdaterRunner(ServiceDiscovery<NodeDetails> serviceDiscovery, ServiceInstance<NodeDetails> thisInstance, NodeStatusUpdater updater) {
         this.serviceDiscovery = serviceDiscovery;
@@ -33,13 +35,12 @@ public class NodeStatusUpdaterRunner implements Runner,Runnable,Closeable{
     @Override
     public void run() {
         try {
-            isRunning = true;
-            while (isRunning) {
+            while (true) {
                 updateNodeStatus();
                 Thread.sleep(updater.getRunIntervalInMs());
             }
         } catch (InterruptedException e) {
-            log.warn("Thread got interrupted",e);
+            log.warn("Thread got interrupted");
         } catch (Exception e) {
             log.error("Error while updating node status",e);
         }
@@ -49,7 +50,7 @@ public class NodeStatusUpdaterRunner implements Runner,Runnable,Closeable{
     private void updateNodeStatus() throws Exception {
         NodeStatus status = updater.updateStatus();
         if(thisInstance.getPayload().getStatus() != status) {
-            log.info("Changing {} status into {}", thisInstance.getName(), status);
+            log.info("Changing {} node {} status into {}",thisInstance.getName(),thisInstance.getId(), status);
             thisInstance.getPayload().setStatus(status);
             serviceDiscovery.updateService(thisInstance);
         }
@@ -58,12 +59,13 @@ public class NodeStatusUpdaterRunner implements Runner,Runnable,Closeable{
 
     @Override
     public void close() throws IOException {
-        isRunning = false;
-        ThreadExecutorsService.close(getClass().getName()+"-"+thisInstance.getName());
+        CloseableUtils.closeQuietly(closableExecutorService);
     }
 
     @Override
     public void start() {
-        ThreadExecutorsService.runAsync(this,getClass().getSimpleName()+"-"+thisInstance.getName());
+        String threadNamePrefix = getClass().getSimpleName()+"-"+thisInstance.getName()+"-"+thisInstance.getId();
+        closableExecutorService = new ClosableExecutorService(ThreadUtils.singleThreadExecutor(threadNamePrefix));
+        closableExecutorService.execute(this);
     }
 }

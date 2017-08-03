@@ -21,7 +21,6 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
     private HashMap<String, String> properties = new HashMap<>();
     private String name;
     private ClusterChangeListener listener;
-    private long checkIntervalInMs = 10000;
     private NodeStatusUpdater updater;
 
     CreateNodeBuilderImpl(CuratorFramework client, String clusterPath) {
@@ -71,11 +70,6 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
         return this;
     }
 
-    public CreateNodeBuilderImpl checkIntervalInMs(long checkIntervalInMs) {
-        this.checkIntervalInMs = checkIntervalInMs;
-        return this;
-    }
-
     String getSchema() {
         return schema;
     }
@@ -108,11 +102,7 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
         return listener;
     }
 
-    long getCheckIntervalInMs() {
-        return checkIntervalInMs;
-    }
-
-    public NodeStatusUpdater getUpdater() {
+    NodeStatusUpdater getUpdater() {
         return updater;
     }
 }

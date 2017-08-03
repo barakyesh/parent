@@ -25,7 +25,6 @@ public class ClusterNodeImpl implements ClusterNode {
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private final ServiceInstance<NodeDetails> thisInstance;
     private final ClusterChangeListener listener;
-    private final long checkIntervalInMs;
     private final NodeStatusUpdater updater;
     private ClusterChangeListenerRunner listenerRunner;
     private NodeStatusUpdaterRunner updaterRunner;
@@ -35,7 +34,6 @@ public class ClusterNodeImpl implements ClusterNode {
         UriSpec uriSpec = new UriSpec(createNodeBuilder.getSchema() + "://{host}:{port}");
         NodeDetails payload = new NodeDetails();
         payload.setNodeProperties(createNodeBuilder.getProperties());
-        this.checkIntervalInMs = createNodeBuilder.getCheckIntervalInMs();
         thisInstance = ServiceInstance.<NodeDetails>builder()
                 .name(Preconditions.checkNotNull(createNodeBuilder.getName(),"name can not be null"))
                 .address(Preconditions.checkNotNull(createNodeBuilder.getHost(),"host can not be null"))

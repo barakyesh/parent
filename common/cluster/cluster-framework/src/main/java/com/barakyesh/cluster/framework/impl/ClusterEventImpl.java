@@ -11,7 +11,7 @@ public class ClusterEventImpl implements ClusterEvent{
     private ClusterEventType type;
 
     public ClusterEventImpl(int size, ClusterEventType type) {
-        this.size = size;
+        this.size = size+1;//add self to cluster size
         this.type = type;
     }
 

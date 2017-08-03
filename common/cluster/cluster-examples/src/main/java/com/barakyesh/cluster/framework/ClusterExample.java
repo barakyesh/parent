@@ -2,7 +2,6 @@ package com.barakyesh.cluster.framework;
 
 import com.barakyesh.cluster.framework.api.*;
 import com.barakyesh.common.utils.CloseableUtils;
-import com.barakyesh.common.utils.ThreadExecutorsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,6 @@ public class ClusterExample {
                         .schema("http")
                         .host("127.0.0.1")
                         .port(8080)
-                        .checkIntervalInMs(1000)
                         .properties(new HashMap<>())
                         .registerListener(new ClusterChangeListener() {
                             private final Logger log = LoggerFactory.getLogger(getClass());
@@ -64,7 +62,6 @@ public class ClusterExample {
         } finally {
             nodes.forEach(CloseableUtils::closeQuietly);
             CloseableUtils.closeQuietly(myCluster);
-            ThreadExecutorsService.close();
         }
     }
 }
