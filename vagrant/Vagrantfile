@@ -1,0 +1,34 @@
+
+Vagrant.configure("2") do |config|
+
+	install_plugin("vagrant-timezone")
+	install_plugin("vagrant-vbguest")
+	
+    config.vm.provider "virtualbox" do |vb|
+        vb.name = "CentOS_7_parent"
+        vb.memory = "1024"
+        vb.cpus = "1"
+    end
+
+	config.timezone.value = "UTC"
+    config.vm.box = "centos/7"
+
+    config.vm.network "private_network", ip: "192.168.33.12"
+	config.ssh.insert_key = false
+	
+    config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
+    config.vm.provision :shell, path: "install.sh"
+
+end
+
+def install_plugin(value)
+	ARGV[0].eql?("up") && unless Vagrant.has_plugin?(value)
+	  # Attempt to install ourself. Bail out on failure so we don't get stuck in an
+	  # infinite loop.
+	  system("vagrant plugin install #{value}") || exit!
+
+	  # Relaunch Vagrant so the plugin is detected. Exit with the same status code.
+	  exit system('vagrant', *ARGV)
+	end
+end
