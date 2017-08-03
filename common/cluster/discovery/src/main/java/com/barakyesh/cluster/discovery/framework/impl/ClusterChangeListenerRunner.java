@@ -51,6 +51,7 @@ public class ClusterChangeListenerRunner implements ListenerRunner,Runnable,Clos
         } catch (Exception e) {
             log.error("Error on {} while listening for cluster changes",Thread.currentThread().getName(),e);
         }
+        log.info("{} stop running",Thread.currentThread().getName());
     }
 
     private Set<ServiceInstance<NodeDetails>> listInstances() throws Exception

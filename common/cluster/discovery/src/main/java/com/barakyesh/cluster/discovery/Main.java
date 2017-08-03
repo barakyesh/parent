@@ -1,12 +1,12 @@
-package com.barakyesh.cluster.discovery.framework;
+package com.barakyesh.cluster.discovery;
 
+import com.barakyesh.cluster.discovery.framework.ClusterFrameworkFactory;
 import com.barakyesh.cluster.discovery.framework.api.ClusterChangeListener;
 import com.barakyesh.cluster.discovery.framework.api.ClusterFramework;
 import com.barakyesh.cluster.discovery.framework.api.ClusterNode;
 import com.barakyesh.cluster.discovery.framework.status.NodeStatus;
+import com.barakyesh.cluster.discovery.framework.utils.CloseableUtils;
 import com.barakyesh.cluster.discovery.framework.utils.ThreadExecutorsService;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.utils.CloseableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class Main {
         List<ClusterNode> nodes = new ArrayList<>();
         try
         {
-            myCluster = ClusterFrameworkFactory.newCluster("myCluster", "192.168.33.12:2181", new ExponentialBackoffRetry(1000, 3));
+            myCluster = ClusterFrameworkFactory.newCluster("myCluster", "192.168.33.12:2181",1000,3);
             myCluster.start();
             for(int i =0;i<10;i++) {
                 ClusterNode clusterNode = myCluster.createNode()

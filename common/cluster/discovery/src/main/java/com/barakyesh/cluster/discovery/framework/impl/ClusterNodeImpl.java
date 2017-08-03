@@ -3,8 +3,8 @@ package com.barakyesh.cluster.discovery.framework.impl;
 import com.barakyesh.cluster.discovery.framework.api.ClusterChangeListener;
 import com.barakyesh.cluster.discovery.framework.api.ClusterNode;
 import com.barakyesh.cluster.discovery.framework.api.NodeDetails;
+import com.barakyesh.cluster.discovery.framework.utils.CloseableUtils;
 import com.google.common.base.Preconditions;
-import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
@@ -63,9 +63,11 @@ public class ClusterNodeImpl implements ClusterNode{
     @Override
     public void start() throws Exception
     {
+        log.info("Starting service discovery instance");
         serviceDiscovery.start();
         if(listener!=null) {
             listenerRunner = new ClusterChangeListenerRunner(serviceDiscovery,thisInstance, listener,checkIntervalInMs);
+            log.info("Starting listener runner instance");
             listenerRunner.start();
         }
     }

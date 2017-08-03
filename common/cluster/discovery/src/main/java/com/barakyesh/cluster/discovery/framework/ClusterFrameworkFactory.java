@@ -3,6 +3,7 @@ package com.barakyesh.cluster.discovery.framework;
 import com.barakyesh.cluster.discovery.framework.api.ClusterFramework;
 import com.barakyesh.cluster.discovery.framework.impl.ClusterFrameworkImpl;
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 
 /**
  * Created by Barak Yeshoua.
@@ -19,11 +20,11 @@ public class ClusterFrameworkFactory {
         return new Builder();
     }
 
-    public static ClusterFramework newCluster(String clusterName,String connectString, RetryPolicy retryPolicy){
+    public static ClusterFramework newCluster(String clusterName,String connectString, int baseSleepTimeMs, int maxRetries){
         return builder().
                 clusterName(clusterName).
                 connectString(connectString).
-                retryPolicy(retryPolicy).
+                retryPolicy(new ExponentialBackoffRetry(baseSleepTimeMs, maxRetries)).
                 build();
     }
 

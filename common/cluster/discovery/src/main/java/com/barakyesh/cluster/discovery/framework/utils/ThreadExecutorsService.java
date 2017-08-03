@@ -21,7 +21,10 @@ public class ThreadExecutorsService {
 
 
     public static ExecutorService newFixedThreadPool(String threadName, int numberOfThreads) {
-        executorServiceMap.putIfAbsent(threadName,Executors.newFixedThreadPool(numberOfThreads, new ExecutorsThreadFactory(threadName)));
+        if(executorServiceMap.containsKey(threadName)){
+            throw new RuntimeException("Executor service with thread name " + threadName + " already exist");
+        }
+        executorServiceMap.put(threadName,Executors.newFixedThreadPool(numberOfThreads, new ExecutorsThreadFactory(threadName)));
         return executorServiceMap.get(threadName);
     }
 

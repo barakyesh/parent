@@ -4,12 +4,10 @@ import com.barakyesh.cluster.discovery.framework.ClusterFrameworkFactory;
 import com.barakyesh.cluster.discovery.framework.api.ClusterFramework;
 import com.barakyesh.cluster.discovery.framework.api.CreateNodeBuilder;
 import com.barakyesh.cluster.discovery.framework.api.NodeDetails;
+import com.barakyesh.cluster.discovery.framework.utils.CloseableUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
-import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import java.io.IOException;
 
