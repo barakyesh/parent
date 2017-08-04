@@ -1,9 +1,6 @@
 package com.barakyesh.cluster.discovery.impl;
 
-import com.barakyesh.cluster.discovery.api.ClusterChangeListener;
-import com.barakyesh.cluster.discovery.api.ClusterNode;
-import com.barakyesh.cluster.discovery.api.NodeDetails;
-import com.barakyesh.cluster.discovery.api.NodeStatusUpdater;
+import com.barakyesh.cluster.discovery.api.*;
 import com.barakyesh.common.utils.CloseableUtils;
 import com.google.common.base.Preconditions;
 import org.apache.curator.x.discovery.ServiceDiscovery;
@@ -15,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -31,7 +29,7 @@ public class ClusterNodeImpl implements ClusterNode {
 
 
     ClusterNodeImpl(CreateNodeBuilderImpl createNodeBuilder) throws Exception {
-        UriSpec uriSpec = new UriSpec(createNodeBuilder.getSchema() + "://{host}:{port}");
+        UriSpec uriSpec = new UriSpec(createNodeBuilder.getSchema() + "://{address}:{port}"+createNodeBuilder.getContext()+"/"+createNodeBuilder.getName());
         NodeDetails payload = new NodeDetails();
         payload.setNodeProperties(createNodeBuilder.getProperties());
         thisInstance = ServiceInstance.<NodeDetails>builder()
@@ -55,11 +53,6 @@ public class ClusterNodeImpl implements ClusterNode {
                 .build();
     }
 
-    public ServiceInstance<NodeDetails> getThisInstance()
-    {
-        return thisInstance;
-    }
-
     @Override
     public void start() throws Exception
     {
@@ -75,6 +68,46 @@ public class ClusterNodeImpl implements ClusterNode {
             log.info("Starting updater runner instance");
             updaterRunner.start();
         }
+    }
+
+    @Override
+    public String getName() {
+        return thisInstance.getName();
+    }
+
+    @Override
+    public String getId() {
+        return thisInstance.getId();
+    }
+
+    @Override
+    public String getHost() {
+        return thisInstance.getAddress();
+    }
+
+    @Override
+    public Integer getPort() {
+        return thisInstance.getPort();
+    }
+
+    @Override
+    public Map<String, String> getServicePropeties() {
+        return thisInstance.getPayload().getNodeProperties();
+    }
+
+    @Override
+    public long getRegistrationTimeUTC() {
+        return thisInstance.getRegistrationTimeUTC();
+    }
+
+    @Override
+    public NodeStatus getServiceStatus() {
+        return thisInstance.getPayload().getStatus();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return thisInstance.buildUriSpec();
     }
 
     @Override

@@ -22,6 +22,7 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
     private String name;
     private ClusterChangeListener listener;
     private NodeStatusUpdater updater;
+    private String context = "";
 
     public CreateNodeBuilderImpl(CuratorFramework client, String clusterPath) {
         this.client = client;
@@ -31,6 +32,12 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
     @Override
     public CreateNodeBuilder schema(String schema) {
         this.schema = schema;
+        return this;
+    }
+
+    @Override
+    public CreateNodeBuilder context(String context) {
+        this.context = context;
         return this;
     }
 
@@ -104,5 +111,9 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
 
     NodeStatusUpdater getUpdater() {
         return updater;
+    }
+
+    String getContext() {
+        return context;
     }
 }

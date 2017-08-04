@@ -7,6 +7,7 @@ import java.util.HashMap;
  */
 public interface CreateNodeBuilder {
     CreateNodeBuilder schema(String schema);
+    CreateNodeBuilder context(String context);
     CreateNodeBuilder host(String host);
     CreateNodeBuilder port(int port);
     CreateNodeBuilder properties(HashMap<String, String> properties);
