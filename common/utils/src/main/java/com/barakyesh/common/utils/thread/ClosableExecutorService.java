@@ -15,7 +15,7 @@ public class ClosableExecutorService implements Closeable{
     private ExecutorService executorService;
     private List<FutureTask> futureTasks = new ArrayList<>();
 
-    public ClosableExecutorService(ExecutorService executorService){
+    ClosableExecutorService(ExecutorService executorService){
         this.executorService = executorService;
     }
 
@@ -29,7 +29,7 @@ public class ClosableExecutorService implements Closeable{
     }
 
 
-    public void execute(Runnable runnable) {
+    void execute(Runnable runnable) {
         FutureTask<Void> futureTask = new FutureTask<>(runnable, null);
         futureTasks.add(futureTask);
         executorService.execute(futureTask);

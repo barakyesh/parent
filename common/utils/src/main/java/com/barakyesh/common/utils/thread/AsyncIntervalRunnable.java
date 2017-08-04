@@ -13,10 +13,11 @@ import java.io.IOException;
 public abstract class AsyncIntervalRunnable implements Runnable,Closeable,Runner{
     private final Logger log = LoggerFactory.getLogger(getClass());
     private ClosableExecutorService closableExecutorService;
+    private boolean isRunning = true;
     @Override
     public void run() {
         try {
-            while (true) {
+            while(isRunning) {
                 doAction();
                 Thread.sleep(getSleepInterval());
             }
@@ -34,6 +35,7 @@ public abstract class AsyncIntervalRunnable implements Runnable,Closeable,Runner
 
     @Override
     public void close() throws IOException {
+        isRunning = false;
         CloseableUtils.closeQuietly(closableExecutorService);
     }
 
