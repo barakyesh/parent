@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ClusterLeaderActionRunner extends LeaderSelectorListenerAdapter implements Closeable {
@@ -17,7 +16,6 @@ public class ClusterLeaderActionRunner extends LeaderSelectorListenerAdapter imp
     private final LeaderAction leaderAction;
     private final String name;
     private final LeaderSelector leaderSelector;
-    private final AtomicInteger leaderCount = new AtomicInteger();
     private boolean isRunning = true;
 
     public ClusterLeaderActionRunner(LeaderAction leaderAction, CuratorFramework client, String path, String name) {
