@@ -1,4 +1,4 @@
-package com.barakyesh.cluster.discovery.api;
+package com.barakyesh.cluster.framework.api;
 
 import java.io.Closeable;
 import java.util.Map;

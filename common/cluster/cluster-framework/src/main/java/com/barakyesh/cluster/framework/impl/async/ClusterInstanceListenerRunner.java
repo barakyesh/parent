@@ -1,10 +1,11 @@
-package com.barakyesh.cluster.discovery.impl;
+package com.barakyesh.cluster.framework.impl.async;
 
 
-import com.barakyesh.cluster.discovery.api.ClusterChangeListener;
-import com.barakyesh.cluster.discovery.api.NodeDetails;
-import com.barakyesh.cluster.discovery.api.NodeStatus;
-import com.barakyesh.common.utils.thread.AsyncIntervalRunnable;
+import com.barakyesh.cluster.framework.api.NodeDetails;
+import com.barakyesh.cluster.framework.api.NodeStatus;
+import com.barakyesh.cluster.framework.api.async.InstanceListener;
+import com.barakyesh.cluster.framework.impl.ClusterEventImpl;
+import com.barakyesh.common.utils.async.AsyncIntervalRunnable;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 
@@ -13,27 +14,27 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.barakyesh.cluster.discovery.api.ClusterEventType.*;
+import static com.barakyesh.cluster.framework.api.ClusterEventType.CLUSTER_SIZE_CHANGED;
+import static com.barakyesh.cluster.framework.api.ClusterEventType.NODE_ADDED;
+import static com.barakyesh.cluster.framework.api.ClusterEventType.NODE_REMOVED;
+
 
 /**
  * Created by Barak Yeshoua.
  */
-public class ClusterChangeListenerRunner extends AsyncIntervalRunnable{
+public class ClusterInstanceListenerRunner extends AsyncIntervalRunnable{
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private ServiceInstance<NodeDetails> thisInstance;
-    private final ClusterChangeListener listener;
+    private final InstanceListener listener;
     private Set<ServiceInstance<NodeDetails>> serviceInstances;
 
-    ClusterChangeListenerRunner(ServiceDiscovery<NodeDetails> serviceDiscovery, ServiceInstance<NodeDetails> thisInstance, ClusterChangeListener listener) {
+    public ClusterInstanceListenerRunner(ServiceDiscovery<NodeDetails> serviceDiscovery, ServiceInstance<NodeDetails> thisInstance, InstanceListener listener) {
+        super(listener.getRunIntervalInMs());
         this.serviceDiscovery = serviceDiscovery;
         this.thisInstance = thisInstance;
         this.listener = listener;
     }
 
-    @Override
-    protected long getSleepInterval() {
-        return listener.getRunIntervalInMs();
-    }
 
     @Override
     protected void doAction() throws Exception {
@@ -71,8 +72,6 @@ public class ClusterChangeListenerRunner extends AsyncIntervalRunnable{
     }
 
 
-
-    @Override
     public void start() throws Exception {
         serviceInstances = listInstances();
         start(getClass().getSimpleName()+"-"+thisInstance.getName()+"-"+thisInstance.getId());

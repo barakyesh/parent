@@ -1,6 +1,7 @@
-package com.barakyesh.common.utils.thread;
+package com.barakyesh.common.utils.async;
 
 import com.barakyesh.common.utils.CloseableUtils;
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,16 +11,23 @@ import java.io.IOException;
 /**
  * Created by Barak Yeshoua.
  */
-public abstract class AsyncIntervalRunnable implements Runnable,Closeable,Runner{
+public abstract class AsyncIntervalRunnable implements Runnable,IntervalRunnable,Closeable{
     private final Logger log = LoggerFactory.getLogger(getClass());
     private ClosableExecutorService closableExecutorService;
     private boolean isRunning = true;
+    private final long sleepInterval;
+
+    protected AsyncIntervalRunnable(long sleepInterval) {
+        Preconditions.checkArgument(sleepInterval > 0,"sleepInterval must be greater than zero, current value = %s",sleepInterval);
+        this.sleepInterval = sleepInterval;
+    }
+
     @Override
     public void run() {
         try {
             while(isRunning) {
                 doAction();
-                Thread.sleep(getSleepInterval());
+                Thread.sleep(getRunIntervalInMs());
             }
         } catch (InterruptedException e) {
             log.warn("Thread got interrupted");
@@ -29,7 +37,9 @@ public abstract class AsyncIntervalRunnable implements Runnable,Closeable,Runner
         log.info("Thread stop running");
     }
 
-    protected abstract long getSleepInterval();
+    public long getRunIntervalInMs(){
+        return sleepInterval;
+    }
 
     protected abstract void doAction() throws Exception;
 
@@ -40,7 +50,7 @@ public abstract class AsyncIntervalRunnable implements Runnable,Closeable,Runner
     }
 
     protected void start(String threadNamePrefix){
-        closableExecutorService = new ClosableExecutorService(ThreadUtils.singleThreadExecutor(threadNamePrefix));
+        closableExecutorService = ExecutorsService.singleThreadExecutor(threadNamePrefix);
         closableExecutorService.execute(this);
     }
 }

@@ -1,10 +1,11 @@
-package com.barakyesh.cluster.discovery.impl;
+package com.barakyesh.cluster.framework.impl;
 
 
-import com.barakyesh.cluster.discovery.api.ClusterChangeListener;
-import com.barakyesh.cluster.discovery.api.ClusterNode;
-import com.barakyesh.cluster.discovery.api.CreateNodeBuilder;
-import com.barakyesh.cluster.discovery.api.NodeStatusUpdater;
+import com.barakyesh.cluster.framework.api.ClusterNode;
+import com.barakyesh.cluster.framework.api.CreateNodeBuilder;
+import com.barakyesh.cluster.framework.api.async.InstanceListener;
+import com.barakyesh.cluster.framework.api.async.LeaderAction;
+import com.barakyesh.cluster.framework.api.async.NodeStatusUpdater;
 import org.apache.curator.framework.CuratorFramework;
 
 import java.util.HashMap;
@@ -20,8 +21,9 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
     private int port;
     private HashMap<String, String> properties = new HashMap<>();
     private String name;
-    private ClusterChangeListener listener;
-    private NodeStatusUpdater updater;
+    private InstanceListener instanceListener;
+    private NodeStatusUpdater nodeStatusUpdater;
+    private LeaderAction leaderAction;
     private String context = "";
 
     public CreateNodeBuilderImpl(CuratorFramework client, String clusterPath) {
@@ -66,14 +68,20 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
     }
 
     @Override
-    public CreateNodeBuilder registerListener(ClusterChangeListener listener) {
-        this.listener = listener;
+    public CreateNodeBuilder registerInstanceListener(InstanceListener instanceListener) {
+        this.instanceListener = instanceListener;
         return this;
     }
 
     @Override
-    public CreateNodeBuilder registerStatusUpdater(NodeStatusUpdater updater) {
-        this.updater = updater;
+    public CreateNodeBuilder registerNodeStatusUpdater(NodeStatusUpdater nodeStatusUpdater) {
+        this.nodeStatusUpdater = nodeStatusUpdater;
+        return this;
+    }
+
+    @Override
+    public CreateNodeBuilder registerLeaderAction(LeaderAction leaderAction) {
+        this.leaderAction = leaderAction;
         return this;
     }
 
@@ -105,15 +113,19 @@ public class CreateNodeBuilderImpl implements CreateNodeBuilder {
         return clusterPath;
     }
 
-    ClusterChangeListener getListener() {
-        return listener;
+    InstanceListener getInstanceListener() {
+        return instanceListener;
     }
 
-    NodeStatusUpdater getUpdater() {
-        return updater;
+    NodeStatusUpdater getNodeStatusUpdater() {
+        return nodeStatusUpdater;
     }
 
     String getContext() {
         return context;
+    }
+
+    LeaderAction getLeaderAction() {
+        return leaderAction;
     }
 }

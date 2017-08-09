@@ -1,12 +1,13 @@
-package com.barakyesh.cluster.discovery.impl;
+package com.barakyesh.cluster.framework.impl;
 
-import com.barakyesh.cluster.discovery.api.ClusterEvent;
-import com.barakyesh.cluster.discovery.api.ClusterEventType;
+
+import com.barakyesh.cluster.framework.api.ClusterEvent;
+import com.barakyesh.cluster.framework.api.ClusterEventType;
 
 /**
  * Created by Barak Yeshoua.
  */
-public class ClusterEventImpl implements ClusterEvent{
+public class ClusterEventImpl implements ClusterEvent {
     private int size;
     private ClusterEventType type;
 

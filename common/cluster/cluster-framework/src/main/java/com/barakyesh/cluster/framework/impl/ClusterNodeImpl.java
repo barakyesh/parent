@@ -1,8 +1,17 @@
-package com.barakyesh.cluster.discovery.impl;
+package com.barakyesh.cluster.framework.impl;
 
-import com.barakyesh.cluster.discovery.api.*;
+import com.barakyesh.cluster.framework.api.ClusterNode;
+import com.barakyesh.cluster.framework.api.NodeDetails;
+import com.barakyesh.cluster.framework.api.NodeStatus;
+import com.barakyesh.cluster.framework.api.async.InstanceListener;
+import com.barakyesh.cluster.framework.api.async.LeaderAction;
+import com.barakyesh.cluster.framework.api.async.NodeStatusUpdater;
+import com.barakyesh.cluster.framework.impl.async.ClusterInstanceListenerRunner;
+import com.barakyesh.cluster.framework.impl.async.ClusterLeaderActionRunner;
+import com.barakyesh.cluster.framework.impl.async.ClusterNodeStatusUpdaterRunner;
 import com.barakyesh.common.utils.CloseableUtils;
 import com.google.common.base.Preconditions;
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
@@ -22,14 +31,23 @@ public class ClusterNodeImpl implements ClusterNode {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ServiceDiscovery<NodeDetails> serviceDiscovery;
     private final ServiceInstance<NodeDetails> thisInstance;
-    private final ClusterChangeListener listener;
-    private final NodeStatusUpdater updater;
-    private final ClusterLeaderRunner clusterLeaderRunner;
-    private ClusterChangeListenerRunner listenerRunner;
-    private NodeStatusUpdaterRunner updaterRunner;
+    private final InstanceListener instanceListener;
+    private final NodeStatusUpdater nodeStatusUpdater;
+    private final LeaderAction leaderAction;
+    private final CuratorFramework client;
+    private final String clusterPath;
+    private ClusterLeaderActionRunner clusterLeaderActionRunner;
+    private ClusterInstanceListenerRunner clusterInstanceListenerRunner;
+    private ClusterNodeStatusUpdaterRunner clusterNodeStatusUpdaterRunner;
 
 
     ClusterNodeImpl(CreateNodeBuilderImpl createNodeBuilder) throws Exception {
+        this.instanceListener = createNodeBuilder.getInstanceListener();
+        this.nodeStatusUpdater = createNodeBuilder.getNodeStatusUpdater();
+        this.leaderAction = createNodeBuilder.getLeaderAction();
+        this.client = createNodeBuilder.getClient();
+        this.clusterPath = createNodeBuilder.getClusterPath();
+
         UriSpec uriSpec = new UriSpec(createNodeBuilder.getSchema() + "://{address}:{port}"+createNodeBuilder.getContext()+"/"+createNodeBuilder.getName());
         NodeDetails payload = new NodeDetails();
         payload.setNodeProperties(createNodeBuilder.getProperties());
@@ -41,15 +59,11 @@ public class ClusterNodeImpl implements ClusterNode {
                 .uriSpec(uriSpec)
                 .build();
 
-        this.listener = createNodeBuilder.getListener();
-        this.updater = createNodeBuilder.getUpdater();
-        this.clusterLeaderRunner = new ClusterLeaderRunner(createNodeBuilder.getClient(), createNodeBuilder.getClusterPath(), thisInstance.getName() + "-" + thisInstance.getId());
-
         JsonInstanceSerializer<NodeDetails> serializer = new JsonInstanceSerializer<>(NodeDetails.class);
 
         serviceDiscovery = ServiceDiscoveryBuilder.builder(NodeDetails.class)
-                .client(createNodeBuilder.getClient())
-                .basePath(createNodeBuilder.getClusterPath())
+                .client(client)
+                .basePath(clusterPath)
                 .serializer(serializer)
                 .thisInstance(thisInstance)
                 .build();
@@ -60,18 +74,21 @@ public class ClusterNodeImpl implements ClusterNode {
     {
         log.info("Starting service discovery instance");
         serviceDiscovery.start();
-        if(listener!=null) {
-            listenerRunner = new ClusterChangeListenerRunner(serviceDiscovery,thisInstance,listener);
-            log.info("Starting listener runner instance");
-            listenerRunner.start();
+        if(instanceListener !=null) {
+            clusterInstanceListenerRunner = new ClusterInstanceListenerRunner(serviceDiscovery,thisInstance, instanceListener);
+            log.info("Starting clusterInstanceListenerRunner instance");
+            clusterInstanceListenerRunner.start();
         }
-        if(updater!=null) {
-            updaterRunner = new NodeStatusUpdaterRunner(serviceDiscovery,thisInstance,updater);
-            log.info("Starting updater runner instance");
-            updaterRunner.start();
+        if(nodeStatusUpdater !=null) {
+            clusterNodeStatusUpdaterRunner = new ClusterNodeStatusUpdaterRunner(serviceDiscovery,thisInstance, nodeStatusUpdater);
+            log.info("Starting clusterNodeStatusUpdaterRunner instance");
+            clusterNodeStatusUpdaterRunner.start();
         }
-        clusterLeaderRunner.start();
-
+        if(leaderAction !=null) {
+            clusterLeaderActionRunner = new ClusterLeaderActionRunner(leaderAction,client, clusterPath, thisInstance.getName() + "-" + thisInstance.getId());
+            log.info("Starting clusterLeaderActionRunner instance");
+            clusterLeaderActionRunner.start();
+        }
     }
 
     @Override
@@ -117,9 +134,9 @@ public class ClusterNodeImpl implements ClusterNode {
     @Override
     public void close() throws IOException
     {
-        CloseableUtils.closeQuietly(listenerRunner);
-        CloseableUtils.closeQuietly(updaterRunner);
-        CloseableUtils.closeQuietly(clusterLeaderRunner);
+        CloseableUtils.closeQuietly(clusterInstanceListenerRunner);
+        CloseableUtils.closeQuietly(clusterNodeStatusUpdaterRunner);
+        CloseableUtils.closeQuietly(clusterLeaderActionRunner);
         CloseableUtils.closeQuietly(serviceDiscovery);
     }
 }

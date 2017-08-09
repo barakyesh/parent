@@ -1,8 +1,13 @@
 package com.barakyesh.cluster.discovery;
 
-import com.barakyesh.cluster.discovery.api.*;
 import com.barakyesh.cluster.framework.ClusterFrameworkFactory;
+import com.barakyesh.cluster.framework.api.ClusterEvent;
 import com.barakyesh.cluster.framework.api.ClusterFramework;
+import com.barakyesh.cluster.framework.api.ClusterNode;
+import com.barakyesh.cluster.framework.api.NodeStatus;
+import com.barakyesh.cluster.framework.api.async.InstanceListener;
+import com.barakyesh.cluster.framework.api.async.LeaderAction;
+import com.barakyesh.cluster.framework.api.async.NodeStatusUpdater;
 import com.barakyesh.common.utils.CloseableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +36,8 @@ public class ClusterDiscoveryExample {
                         .port(8080)
                         .context("/rest")
                         .properties(new HashMap<>())
-                        .registerListener(new ClusterChangeListener() {
+                        .registerInstanceListener(new InstanceListener() {
+
                             private final Logger log = LoggerFactory.getLogger(getClass());
 
                             @Override
@@ -43,8 +49,10 @@ public class ClusterDiscoveryExample {
                             public long getRunIntervalInMs() {
                                 return 10000;
                             }
+
                         })
-                        .registerStatusUpdater(new NodeStatusUpdater() {
+                        .registerNodeStatusUpdater(new NodeStatusUpdater() {
+
                             @Override
                             public NodeStatus updateStatus() {
                                 return NodeStatus.values()[new Random().nextInt(NodeStatus.values().length)];
@@ -55,6 +63,19 @@ public class ClusterDiscoveryExample {
                                 return 10000;
                             }
 
+
+                        })
+                        .registerLeaderAction(new LeaderAction() {
+                            private final Logger log = LoggerFactory.getLogger(getClass());
+                            @Override
+                            public void doAction() {
+                                log.info("{} is now the leader.",Thread.currentThread().getName());
+                            }
+
+                            @Override
+                            public long getRunIntervalInMs() {
+                                return 10000;
+                            }
                         })
                         .forName("myService");
                 clusterNode.start();

@@ -1,4 +1,4 @@
-package com.barakyesh.common.utils.thread;
+package com.barakyesh.common.utils.async;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class ClosableExecutorService implements Closeable{
     }
 
 
-    void execute(Runnable runnable) {
+    public void execute(Runnable runnable) {
         FutureTask<Void> futureTask = new FutureTask<>(runnable, null);
         futureTasks.add(futureTask);
         executorService.execute(futureTask);
