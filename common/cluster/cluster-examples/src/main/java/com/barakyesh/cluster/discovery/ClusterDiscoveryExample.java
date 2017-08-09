@@ -29,6 +29,7 @@ public class ClusterDiscoveryExample {
                         .schema("http")
                         .host("127.0.0.1")
                         .port(8080)
+                        .context("/rest")
                         .properties(new HashMap<>())
                         .registerListener(new ClusterChangeListener() {
                             private final Logger log = LoggerFactory.getLogger(getClass());

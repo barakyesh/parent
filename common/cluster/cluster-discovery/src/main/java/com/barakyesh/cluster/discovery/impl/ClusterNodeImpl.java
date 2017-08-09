@@ -24,6 +24,7 @@ public class ClusterNodeImpl implements ClusterNode {
     private final ServiceInstance<NodeDetails> thisInstance;
     private final ClusterChangeListener listener;
     private final NodeStatusUpdater updater;
+    private final ClusterLeaderRunner clusterLeaderRunner;
     private ClusterChangeListenerRunner listenerRunner;
     private NodeStatusUpdaterRunner updaterRunner;
 
@@ -42,6 +43,7 @@ public class ClusterNodeImpl implements ClusterNode {
 
         this.listener = createNodeBuilder.getListener();
         this.updater = createNodeBuilder.getUpdater();
+        this.clusterLeaderRunner = new ClusterLeaderRunner(createNodeBuilder.getClient(), createNodeBuilder.getClusterPath(), thisInstance.getName() + "-" + thisInstance.getId());
 
         JsonInstanceSerializer<NodeDetails> serializer = new JsonInstanceSerializer<>(NodeDetails.class);
 
@@ -68,6 +70,8 @@ public class ClusterNodeImpl implements ClusterNode {
             log.info("Starting updater runner instance");
             updaterRunner.start();
         }
+        clusterLeaderRunner.start();
+
     }
 
     @Override
@@ -115,6 +119,7 @@ public class ClusterNodeImpl implements ClusterNode {
     {
         CloseableUtils.closeQuietly(listenerRunner);
         CloseableUtils.closeQuietly(updaterRunner);
+        CloseableUtils.closeQuietly(clusterLeaderRunner);
         CloseableUtils.closeQuietly(serviceDiscovery);
     }
 }
