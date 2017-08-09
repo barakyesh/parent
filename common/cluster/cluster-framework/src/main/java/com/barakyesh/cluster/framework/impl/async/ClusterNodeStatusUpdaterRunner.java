@@ -21,7 +21,7 @@ public class ClusterNodeStatusUpdaterRunner extends AsyncIntervalRunnable{
 
 
     public ClusterNodeStatusUpdaterRunner(ServiceDiscovery<NodeDetails> serviceDiscovery, ServiceInstance<NodeDetails> thisInstance, NodeStatusUpdater updater) {
-        super(updater.getRunIntervalInMs());
+        super(updater.getRunInterval());
         this.serviceDiscovery = serviceDiscovery;
         this.thisInstance = thisInstance;
         this.updater = updater;

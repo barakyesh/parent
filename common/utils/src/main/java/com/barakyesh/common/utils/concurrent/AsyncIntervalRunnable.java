@@ -27,7 +27,7 @@ public abstract class AsyncIntervalRunnable implements Runnable,IntervalRunnable
         try {
             while(isRunning) {
                 doAction();
-                Thread.sleep(getRunIntervalInMs());
+                Thread.sleep(getRunInterval());
             }
         } catch (InterruptedException e) {
             log.warn("Thread got interrupted");
@@ -37,7 +37,7 @@ public abstract class AsyncIntervalRunnable implements Runnable,IntervalRunnable
         log.info("Thread stop running");
     }
 
-    public long getRunIntervalInMs(){
+    public long getRunInterval(){
         return sleepInterval;
     }
 
@@ -50,7 +50,7 @@ public abstract class AsyncIntervalRunnable implements Runnable,IntervalRunnable
     }
 
     protected void start(String threadNamePrefix){
-        closableExecutorService = ExecutorsService.singleThreadExecutor(threadNamePrefix);
+        closableExecutorService = ClosableExecutorService.singleThreadExecutor(threadNamePrefix);
         closableExecutorService.execute(this);
     }
 }

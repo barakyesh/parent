@@ -4,5 +4,10 @@ package com.barakyesh.common.utils.concurrent;
  * Created by Barak Yeshoua.
  */
 public interface IntervalRunnable{
-    long getRunIntervalInMs();
+    /**
+     * Get the time to wait between two runs
+     *
+     * @return the run interval in ms
+     */
+    long getRunInterval();
 }

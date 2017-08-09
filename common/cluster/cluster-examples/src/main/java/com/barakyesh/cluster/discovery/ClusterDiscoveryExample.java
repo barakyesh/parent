@@ -46,7 +46,7 @@ public class ClusterDiscoveryExample {
                             }
 
                             @Override
-                            public long getRunIntervalInMs() {
+                            public long getRunInterval() {
                                 return 10000;
                             }
 
@@ -59,7 +59,7 @@ public class ClusterDiscoveryExample {
                             }
 
                             @Override
-                            public long getRunIntervalInMs() {
+                            public long getRunInterval() {
                                 return 10000;
                             }
 
@@ -73,7 +73,7 @@ public class ClusterDiscoveryExample {
                             }
 
                             @Override
-                            public long getRunIntervalInMs() {
+                            public long getRunInterval() {
                                 return 10000;
                             }
                         })

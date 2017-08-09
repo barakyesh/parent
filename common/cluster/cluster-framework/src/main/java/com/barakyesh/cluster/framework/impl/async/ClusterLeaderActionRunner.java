@@ -42,7 +42,7 @@ public class ClusterLeaderActionRunner extends LeaderSelectorListenerAdapter imp
         try {
             while (isRunning) {
                 leaderAction.doAction();
-                Thread.sleep(leaderAction.getRunIntervalInMs());
+                Thread.sleep(leaderAction.getRunInterval());
             }
         } catch (InterruptedException e) {
             log.warn("Leader concurrent {} got interrupted", name);

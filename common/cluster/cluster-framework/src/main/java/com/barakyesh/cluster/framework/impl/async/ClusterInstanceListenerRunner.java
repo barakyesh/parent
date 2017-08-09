@@ -29,7 +29,7 @@ public class ClusterInstanceListenerRunner extends AsyncIntervalRunnable{
     private Set<ServiceInstance<NodeDetails>> serviceInstances;
 
     public ClusterInstanceListenerRunner(ServiceDiscovery<NodeDetails> serviceDiscovery, ServiceInstance<NodeDetails> thisInstance, InstanceListener listener) {
-        super(listener.getRunIntervalInMs());
+        super(listener.getRunInterval());
         this.serviceDiscovery = serviceDiscovery;
         this.thisInstance = thisInstance;
         this.listener = listener;
