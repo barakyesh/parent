@@ -1,4 +1,4 @@
-package com.barakyesh.common.utils.async;
+package com.barakyesh.common.utils.concurrent;
 
 import com.barakyesh.common.utils.CloseableUtils;
 import com.google.common.base.Preconditions;

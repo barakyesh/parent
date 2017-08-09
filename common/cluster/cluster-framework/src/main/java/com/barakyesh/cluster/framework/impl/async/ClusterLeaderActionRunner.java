@@ -45,11 +45,11 @@ public class ClusterLeaderActionRunner extends LeaderSelectorListenerAdapter imp
                 Thread.sleep(leaderAction.getRunIntervalInMs());
             }
         } catch (InterruptedException e) {
-            log.warn("Leader async {} got interrupted", name);
+            log.warn("Leader concurrent {} got interrupted", name);
         } catch (Exception e) {
-            log.error("Error while running Leader async {}", name, e);
+            log.error("Error while running Leader concurrent {}", name, e);
         }
-        log.info("Leader async {} stop running", name);
+        log.info("Leader concurrent {} stop running", name);
 
 
     }

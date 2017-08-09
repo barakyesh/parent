@@ -4,7 +4,7 @@ package com.barakyesh.cluster.framework.impl.async;
 import com.barakyesh.cluster.framework.api.NodeDetails;
 import com.barakyesh.cluster.framework.api.NodeStatus;
 import com.barakyesh.cluster.framework.api.async.NodeStatusUpdater;
-import com.barakyesh.common.utils.async.AsyncIntervalRunnable;
+import com.barakyesh.common.utils.concurrent.AsyncIntervalRunnable;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.slf4j.Logger;

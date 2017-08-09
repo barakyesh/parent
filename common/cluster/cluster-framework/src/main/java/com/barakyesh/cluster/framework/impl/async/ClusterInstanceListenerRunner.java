@@ -5,7 +5,7 @@ import com.barakyesh.cluster.framework.api.NodeDetails;
 import com.barakyesh.cluster.framework.api.NodeStatus;
 import com.barakyesh.cluster.framework.api.async.InstanceListener;
 import com.barakyesh.cluster.framework.impl.ClusterEventImpl;
-import com.barakyesh.common.utils.async.AsyncIntervalRunnable;
+import com.barakyesh.common.utils.concurrent.AsyncIntervalRunnable;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 

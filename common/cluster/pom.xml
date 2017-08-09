@@ -12,7 +12,6 @@
     <artifactId>cluster</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>cluster-discovery</module>
         <module>cluster-examples</module>
         <module>cluster-framework</module>
     </modules>
